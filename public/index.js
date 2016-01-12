@@ -237,28 +237,52 @@ function getRentalbyId(id)
     return rentalInfo;
 }
 
+//Modify the flow of the money
+function updateMoneyFlow(eachPayment,moneyflow)
+{
+    if(moneyflow)
+        {
+            eachPayment.type = 'credit';
+        }
+    else
+        {
+            eachPayment.type = 'debit';
+        }
+}
+
 //Update the payment information for each actor
 function updatePayment(eachActor,rentalInfo)
 {
     eachActor.payment.forEach(
     function(eachPayment)
         {
+            var moneyFlow = false;
+            if(rentalInfo.price < 0)
+                {
+                    moneyFlow = true;
+                }
+            
             switch(eachPayment.who)
             {
                 case 'driver':
-                    eachPayment.amount = rentalInfo.price;
+                    eachPayment.amount = Math.abs(rentalInfo.price);
+                    updateMoneyFlow(eachPayment, moneyFlow);
                     break;
                 case 'insurance':
-                    eachPayment.amount = rentalInfo.commission.insurance;
+                    eachPayment.amount = Math.abs(rentalInfo.commission.insurance);
+                    updateMoneyFlow(eachPayment, !moneyFlow);
                     break;
                 case 'assistance':
-                    eachPayment.amount = rentalInfo.commission.assistance;
+                    eachPayment.amount = Math.abs(rentalInfo.commission.assistance);
+                    updateMoneyFlow(eachPayment, !moneyFlow);
                     break;
                 case 'drivy':
-                    eachPayment.amount = rentalInfo.commission.drivy;
+                    eachPayment.amount = Math.abs(rentalInfo.commission.drivy);
+                    updateMoneyFlow(eachPayment, !moneyFlow);
                     break;
                 case 'owner':
-                    eachPayment.amount = rentalInfo.price - rentalInfo.commission.assistance - rentalInfo.commission.drivy - rentalInfo.commission.insurance;
+                    eachPayment.amount = Math.abs(rentalInfo.price - rentalInfo.commission.assistance - rentalInfo.commission.drivy - rentalInfo.commission.insurance);
+                    updateMoneyFlow(eachPayment, !moneyFlow);
                     break;
             }
         }
@@ -277,9 +301,56 @@ function updateActor()
     );
 }
 
+//Applies all modifications
+function applyModification()
+{
+    var deltaprice = [];
+    rentalModifications.forEach(
+    function(eachMod)
+        {
+            var rentalInfo = getRentalbyId(eachMod.rentalId);
+            var tempPrice = rentalInfo.price;
+            console.log("Price before modification: "+tempPrice);
+            if(eachMod.returnDate != null)
+                {
+                    rentalInfo.returnDate = eachMod.returnDate;
+                }
+            if(eachMod.pickupDate != null)
+                {
+                    rentalInfo.pickupDate = eachMod.pickupDate;
+                }
+            if(eachMod.distance != null)
+                {
+                    rentalInfo.distance = eachMod.distance;
+                }
+
+            updatePrice();
+            rentalInfo = getRentalbyId(eachMod.rentalId);
+            console.log("Price after modification: "+rentalInfo.price);
+            var newPrice = rentalInfo.price - tempPrice;
+            deltaprice.push({'rentalId': rentalInfo.id,'price': newPrice})
+            
+            console.log("DeltaAmount: "+ newPrice);
+        }
+    );
+    
+    if(deltaprice.length != 0)
+        {
+            deltaprice.forEach(
+            function(eachPrice)
+                {
+                    var rentalInfo = getRentalbyId(eachPrice.rentalId);
+                    rentalInfo.price = eachPrice.price;
+                }
+            )
+        }
+    updateActor();
+}
+
+
 updatePrice();
 updateActor();
-
+applyModification();
 
 console.log(cars);
 console.log(rentals);
