@@ -175,19 +175,10 @@ function updatePrice()
             {  
                 if(eachCar.id == eachRental.carId)
                 {
-                    var time =(new Date(eachRental.returnDate) - new Date(eachRental.pickupDate))/(24*3600*1000);
-                    
-                    var timePrice;
-                    if(time == 0)
-                    {
-                        timePrice=1*eachCar.pricePerDay;
-                    }
-                    else
-                    {
-                        timePrice = time*eachCar.pricePerDay;
-                    }
+                    var time =(1+(new Date(eachRental.returnDate) - new Date(eachRental.pickupDate))/(24*3600*1000))*eachCar.pricePerDay;
+                
                     var km = eachRental.distance*eachCar.pricePerKm ;
-                    eachRental.price = timePrice + km;
+                    eachRental.price = time + km;
                 }
             });
         }
