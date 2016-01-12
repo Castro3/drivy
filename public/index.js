@@ -22,10 +22,6 @@ var cars = [{
 //The `price` is updated from exercice 1
 //The `commission` is updated from exercice 3
 //The `options` is useful from exercice 4
-function getPrice(id,pickupDate,returnDate,distance)
-{
-	
-}
 var rentals = [{
   'id': '1-pb-92',
   'driver': {
@@ -169,6 +165,26 @@ var rentalModifications = [{
   'pickupDate': '2015-12-05'
 }];
 
+function updatePrice()
+{
+    rentals.forEach(
+        function(eachRental)
+        {
+            cars.forEach(
+            function(eachCar)
+            {  
+                if(eachCar.id == eachRental.carId)
+                {
+                    var time =(1+(new Date(eachRental.returnDate) - new Date(eachRental.pickupDate))/(24*3600*1000))*eachCar.pricePerDay;
+                    var km = eachRental.distance*eachCar.pricePerKm ;
+                    eachRental.price = time + km;
+                }
+            });
+        }
+    );
+}
+
+updatePrice();
 console.log(cars);
 console.log(rentals);
 console.log(actors);
