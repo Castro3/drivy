@@ -22,6 +22,10 @@ var cars = [{
 //The `price` is updated from exercice 1
 //The `commission` is updated from exercice 3
 //The `options` is useful from exercice 4
+function getPrice(id,pickupDate,returnDate,distance)
+{
+	
+}
 var rentals = [{
   'id': '1-pb-92',
   'driver': {
