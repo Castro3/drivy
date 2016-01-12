@@ -165,6 +165,7 @@ var rentalModifications = [{
   'pickupDate': '2015-12-05'
 }];
 
+//Update price info and commisions for each rental
 function updatePrice()
 {
     rentals.forEach(
@@ -220,9 +221,10 @@ function updatePrice()
     );
 }
 
+//returns rental informations which corresponds to the rentalId
 function getRentalbyId(id)
 {
-    var rentalInfo;
+    var rentalInfo = 0;
     rentals.forEach(
     function(eachRental)
         {
@@ -235,26 +237,50 @@ function getRentalbyId(id)
     return rentalInfo;
 }
 
-function getPayment(who)
+//Update the payment information for each actor
+function updatePayment(eachActor,rentalInfo)
 {
-    switch(who)
+    eachActor.payment.forEach(
+    function(eachPayment)
         {
-                
+            switch(eachPayment.who)
+            {
+                case 'driver':
+                    eachPayment.amount = rentalInfo.price;
+                    break;
+                case 'insurance':
+                    eachPayment.amount = rentalInfo.commission.insurance;
+                    break;
+                case 'assistance':
+                    eachPayment.amount = rentalInfo.commission.assistance;
+                    break;
+                case 'drivy':
+                    eachPayment.amount = rentalInfo.commission.drivy;
+                    break;
+                case 'owner':
+                    eachPayment.amount = rentalInfo.price - rentalInfo.commission.assistance - rentalInfo.commission.drivy - rentalInfo.commission.insurance;
+                    break;
+            }
         }
+    )
 }
+
+//Update Actor information
 function updateActor()
 {
     actors.forEach(
     function(eachActor)
         {
             var rentalInfo = getRentalbyId(eachActor.rentalId);
-            eachActor.payment.amount = rentalInfo.price;
-            
+            updatePayment(eachActor,rentalInfo);
         }
     );
 }
+
 updatePrice();
 updateActor();
+
+
 console.log(cars);
 console.log(rentals);
 console.log(actors);
