@@ -165,6 +165,7 @@ var rentalModifications = [{
   'pickupDate': '2015-12-05'
 }];
 
+
 function updatePrice()
 {
     rentals.forEach(
@@ -183,7 +184,7 @@ function updatePrice()
                         {
                             newPricePerDay = eachCar.pricePerDay*0.90;
                         }
-                    
+               
                     
                     if(time>4)
                         {
@@ -198,11 +199,17 @@ function updatePrice()
                
                     var km = eachRental.distance*eachCar.pricePerKm ;
                     eachRental.price = time*newPricePerDay + km;
+                    
+                    var commision = eachRental.price*0.30;
+                    eachRental.commission.assistance = commision*0.50;
+                    eachRental.commission.insurance = 1*time;
+                    eachRental.commission.drivy = commision - eachRental.commission.assistance - eachRental.commission.insurance;
                 }
             });
         }
     );
 }
+
 
 updatePrice();
 console.log(cars);
