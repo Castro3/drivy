@@ -165,7 +165,6 @@ var rentalModifications = [{
   'pickupDate': '2015-12-05'
 }];
 
-
 function updatePrice()
 {
     rentals.forEach(
@@ -198,8 +197,19 @@ function updatePrice()
                     
                
                     var km = eachRental.distance*eachCar.pricePerKm ;
-                    eachRental.price = time*newPricePerDay + km;
                     
+                    //Deductible option
+                    if(eachRental.options.deductibleReduction)
+                    {
+                        eachRental.price = time*newPricePerDay + km + 4*time;
+                    }
+                    else
+                    {
+                        eachRental.price = time*newPricePerDay + km;
+                    }
+                    
+                    
+                    //Calculate the commision
                     var commision = eachRental.price*0.30;
                     eachRental.commission.assistance = commision*0.50;
                     eachRental.commission.insurance = 1*time;
@@ -210,8 +220,41 @@ function updatePrice()
     );
 }
 
+function getRentalbyId(id)
+{
+    var rentalInfo;
+    rentals.forEach(
+    function(eachRental)
+        {
+            if(eachRental.id==id)
+                {
+                    rentalInfo = eachRental;
+                }
+        }
+    );
+    return rentalInfo;
+}
 
+function getPayment(who)
+{
+    switch(who)
+        {
+                
+        }
+}
+function updateActor()
+{
+    actors.forEach(
+    function(eachActor)
+        {
+            var rentalInfo = getRentalbyId(eachActor.rentalId);
+            eachActor.payment.amount = rentalInfo.price;
+            
+        }
+    );
+}
 updatePrice();
+updateActor();
 console.log(cars);
 console.log(rentals);
 console.log(actors);
