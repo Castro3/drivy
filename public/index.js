@@ -175,10 +175,29 @@ function updatePrice()
             {  
                 if(eachCar.id == eachRental.carId)
                 {
-                    var time =(1+(new Date(eachRental.returnDate) - new Date(eachRental.pickupDate))/(24*3600*1000))*eachCar.pricePerDay;
+                    //time is calculated in milliseconds
+                    var time =(1+(new Date(eachRental.returnDate) - new Date(eachRental.pickupDate))/(24*3600*1000));
+              
+                    var newPricePerDay = eachCar.pricePerDay;
+                    if(time>1)
+                        {
+                            newPricePerDay = eachCar.pricePerDay*0.90;
+                        }
+                    
+                    
+                    if(time>4)
+                        {
+                            newPricePerDay = eachCar.pricePerDay*0.70;
+                        }
                 
+                    if(time>10)
+                        {
+                            newPricePerDay = eachCar.pricePerDay*0.50;
+                        }
+                    
+               
                     var km = eachRental.distance*eachCar.pricePerKm ;
-                    eachRental.price = time + km;
+                    eachRental.price = time*newPricePerDay + km;
                 }
             });
         }
