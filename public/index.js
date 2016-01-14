@@ -211,10 +211,21 @@ function updatePrice()
                     
                     
                     //Calculate the commision
-                    var commision = eachRental.price*0.30;
-                    eachRental.commission.assistance = commision*0.50;
-                    eachRental.commission.insurance = 1*time;
-                    eachRental.commission.drivy = commision - eachRental.commission.assistance - eachRental.commission.insurance;
+                    if(eachRental.options.deductibleReduction)
+                        {
+                            var commision = (eachRental.price-4*time)*0.30;
+                            eachRental.commission.assistance = commision*0.50;
+                            eachRental.commission.insurance = 1*time;
+                            eachRental.commission.drivy = commision - eachRental.commission.assistance - eachRental.commission.insurance + 4*time;
+                        }
+                    else
+                        {
+                            var commision = eachRental.price*0.30;
+                            eachRental.commission.assistance = commision*0.50;
+                            eachRental.commission.insurance = 1*time;
+                            eachRental.commission.drivy = commision - eachRental.commission.assistance - eachRental.commission.insurance;
+                        }
+                    
                 }
             });
         }
